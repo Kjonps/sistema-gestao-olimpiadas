@@ -4,7 +4,7 @@
 **Professor:** João Paulo Carneiro Aramuni  
 **Período:** 4º  
 **Valor:** 10 pontos  
-**Data de Entrega:** [Adicionar data]
+**Data de Entrega:** 13/05/2026
 
 ---
 
