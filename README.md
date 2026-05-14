@@ -368,7 +368,7 @@ projeto-sgo/
 ├── imagens/
 │   ├── diagrama-de-caso-de-uso.png
 │   ├── diagrama-de-classes.png
-│   ├── diagrama-de-pacotes.png
+│   ├── diagrama-de-pacotes.svg
 │   ├── diagrama-de-componentes.png
 │   └── diagrama-de-implantacao.png
 └── codigos/
