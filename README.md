@@ -391,18 +391,6 @@ projeto-sgo/
 
 ---
 
-## ✅ Avaliação
-
-Cada diagrama será avaliado em:
-- **Clareza (25%):** Fácil entendimento?
-- **Correção (25%):** Segue sintaxe UML?
-- **Completude (25%):** Elementos relevantes incluídos?
-- **Aderência (25%):** Representa o problema adequadamente?
-
-**Nota Total:** 10 pontos (2.5 por diagrama)
-
----
-
 ## 📞 Referências
 
 - PlantUML: https://plantuml.com/
