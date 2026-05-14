@@ -395,7 +395,3 @@ projeto-sgo/
 
 - PlantUML: https://plantuml.com/
 - UML Specification: https://www.omg.org/spec/UML/
-
----
-
-**Status:** ✅ Pronto para entrega
