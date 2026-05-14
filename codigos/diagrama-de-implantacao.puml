@@ -1,0 +1,164 @@
+@startuml Diagrama de Implantação - SGO
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Implantação
+
+' Configuração de estilos
+skinparam rectangle {
+    BackgroundColor #E1F5FE
+    BorderColor #01579B
+}
+
+' Nó do Cliente Web
+node "Computador do Usuário" as ClienteWeb {
+    artifact "Navegador Web\n(Chrome, Firefox, Safari)" as Browser {
+    }
+    artifact "Interface HTML/CSS/JS" as InterfaceWeb {
+    }
+}
+
+' Nó do Cliente Mobile
+node "Dispositivo Mobile" as ClienteMobile {
+    artifact "Aplicação Mobile\n(iOS/Android)" as AppMobile {
+    }
+}
+
+' Rede de Comunicação
+cloud "Rede Internet\nHTTP/HTTPS" as Internet {
+}
+
+' Zona DMZ - Load Balancer
+node "Load Balancer\n(Nginx/HAProxy)" as LoadBalancer {
+    artifact "Distribuidor de Tráfego" as Distribuidor {
+    }
+}
+
+' Zona de Aplicação - Servidores Web (Cluster)
+node "Servidor Web 01" as ServidorWeb01 {
+    artifact "Apache Tomcat 10.0" as Tomcat01 {
+        artifact "Aplicação SGO\n(Deployment .war)" as AppSGO01 {
+        }
+    }
+}
+
+node "Servidor Web 02" as ServidorWeb02 {
+    artifact "Apache Tomcat 10.0" as Tomcat02 {
+        artifact "Aplicação SGO\n(Deployment .war)" as AppSGO02 {
+        }
+    }
+}
+
+node "Servidor Web 03" as ServidorWeb03 {
+    artifact "Apache Tomcat 10.0" as Tomcat03 {
+        artifact "Aplicação SGO\n(Deployment .war)" as AppSGO03 {
+        }
+    }
+}
+
+' Zona de Banco de Dados - Replicação
+node "Servidor de Banco de Dados Principal\n(Master)" as BDPrincipal {
+    artifact "MySQL Server 8.0" as MySQL_Master {
+        database "BaseDados-SGO\n(Produção)" as DBProd {
+            folder "Tabelas" as TabelasProd {
+            }
+            folder "Índices" as ÍndicesProd {
+            }
+        }
+    }
+}
+
+node "Servidor de Banco de Dados Secundário\n(Slave - Backup)" as BDSecundario {
+    artifact "MySQL Server 8.0\n(Replicação)" as MySQL_Slave {
+        database "BaseDados-SGO\n(Backup)" as DBBackup {
+        }
+    }
+}
+
+' Servidor de Arquivos e Backup
+node "Servidor de Armazenamento" as ServidorArmazenamento {
+    artifact "NAS (Network Attached Storage)" as NAS {
+        folder "Documentos" as Documentos {
+        }
+        folder "Backups" as Backups {
+        }
+        folder "Logs" as Logs {
+        }
+    }
+}
+
+' Servidor de Email
+node "Servidor de Email" as ServidorEmail {
+    artifact "Postfix/SMTP" as Email {
+    }
+}
+
+' Serviço de Autenticação (LDAP/AD)
+node "Servidor LDAP/Active Directory" as ServidorAutenticação {
+    artifact "OpenLDAP / Active Directory" as LDAP {
+    }
+}
+
+' Servidor de Monitoramento e Logs
+node "Servidor de Monitoramento" as ServidorMonitoramento {
+    artifact "ELK Stack\n(Elasticsearch, Logstash, Kibana)" as ELK {
+    }
+    artifact "Prometheus + Grafana" as PromethausGrafana {
+    }
+}
+
+' Firewall
+node "Firewall / Proxy" as Firewall {
+    artifact "Proteção de Camada 7\n(WAF)" as WAF {
+    }
+}
+
+' Conexões
+
+' Clientes para Internet
+ClienteWeb --> Internet : HTTP/HTTPS
+ClienteMobile --> Internet : HTTP/HTTPS REST API
+
+' Internet para DMZ (Load Balancer)
+Internet --> Firewall : requisição
+Firewall --> LoadBalancer : permite tráfego
+
+' Load Balancer para Servidores Web
+LoadBalancer --> ServidorWeb01 : distribui
+LoadBalancer --> ServidorWeb02 : distribui
+LoadBalancer --> ServidorWeb03 : distribui
+
+' Servidores Web para Banco de Dados Principal
+Tomcat01 --> MySQL_Master : conexão JDBC
+Tomcat02 --> MySQL_Master : conexão JDBC
+Tomcat03 --> MySQL_Master : conexão JDBC
+
+' Banco Principal para Banco Secundário (Replicação)
+MySQL_Master --> MySQL_Slave : replica dados\n(binlog)
+
+' Banco de Dados para Armazenamento (Backup)
+MySQL_Master --> NAS : backup automático\n(diário)
+
+' Servidores Web para Serviços Externos
+Tomcat01 --> Email : envia emails
+Tomcat02 --> Email : envia emails
+Tomcat03 --> Email : envia emails
+
+Tomcat01 --> LDAP : autentica usuários
+Tomcat02 --> LDAP : autentica usuários
+Tomcat03 --> LDAP : autentica usuários
+
+' Servidores para Monitoramento
+Tomcat01 -.-> ELK : envia logs
+Tomcat02 -.-> ELK : envia logs
+Tomcat03 -.-> ELK : envia logs
+
+MySQL_Master -.-> PromethausGrafana : métricas
+ServidorWeb01 -.-> PromethausGrafana : métricas
+ServidorWeb02 -.-> PromethausGrafana : métricas
+ServidorWeb03 -.-> PromethausGrafana : métricas
+
+' NAS para armazenamento
+Tomcat01 --> NAS : armazena arquivos
+Tomcat02 --> NAS : armazena arquivos
+Tomcat03 --> NAS : armazena arquivos
+
+@enduml

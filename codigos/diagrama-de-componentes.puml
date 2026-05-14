@@ -1,0 +1,119 @@
+@startuml Diagrama de Componentes - SGO
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Componentes
+
+skinparam componentStyle uml2
+
+package "Cliente" {
+    component [Interface Web] as InterfaceWeb
+    component [Interface Mobile] as InterfaceMobile
+}
+
+package "Servidor de Aplicação" {
+    component [Servidor Web (Apache/Tomcat)] as ServidorWeb
+    
+    package "Módulo de Apresentação" {
+        component [Controlador Web] as ControladorWeb
+        component [Gateway de Requisições] as Gateway
+    }
+    
+    package "Módulo de Negócio" {
+        component [Serviço de Competições] as ServiçoCompetição
+        component [Serviço de Inscrições] as ServiçoInscrição
+        component [Serviço de Alocações] as ServiçoAlocação
+        component [Serviço de Resultados] as ServiçoResultados
+        component [Serviço de Relatórios] as ServiçoRelatórios
+        component [Serviço de Validações] as ServiçoValidação
+    }
+    
+    package "Módulo de Acesso a Dados" {
+        component [DAO Atleta] as DAOAtleta
+        component [DAO Competição] as DAOCompetição
+        component [DAO Local] as DAOLocal
+        component [DAO Resultado] as DAOResultado
+        component [DAO País] as DAOPaís
+        component [DAO Medalha] as DAOMedalha
+    }
+    
+    package "Módulo de Cache e Sessão" {
+        component [Gerenciador de Sessão] as GerenciadorSessão
+        component [Cache de Dados] as Cache
+    }
+}
+
+package "Banco de Dados" {
+    component [Servidor MySQL] as ServidorBD
+    component [Replicação BD] as ReplicaçãoBD
+}
+
+package "Serviços Externos" {
+    component [Sistema de Email] as Email
+    component [Serviço de Autenticação] as Autenticação
+    component [Serviço de Auditoria] as Auditoria
+}
+
+package "Armazenamento" {
+    component [Servidor de Arquivos] as ArmazenamentoArquivos
+    component [Backup] as Backup
+}
+
+' Conectores - Cliente para Servidor
+InterfaceWeb --> ServidorWeb : HTTP/HTTPS
+InterfaceMobile --> ServidorWeb : HTTP/HTTPS REST API
+
+' Conectores - Camada de Apresentação
+ServidorWeb --> ControladorWeb : processa
+Gateway --> ControladorWeb : direciona requisições
+
+' Conectores - Controlador para Serviços de Negócio
+ControladorWeb --> ServiçoCompetição : usa
+ControladorWeb --> ServiçoInscrição : usa
+ControladorWeb --> ServiçoAlocação : usa
+ControladorWeb --> ServiçoResultados : usa
+ControladorWeb --> ServiçoRelatórios : usa
+
+' Conectores - Serviços de Negócio
+ServiçoCompetição --> ServiçoValidação : valida
+ServiçoInscrição --> ServiçoValidação : valida
+ServiçoAlocação --> ServiçoValidação : valida
+ServiçoResultados --> ServiçoValidação : valida
+
+' Conectores - Serviços para DAOs
+ServiçoCompetição --> DAOCompetição : acessa
+ServiçoCompetição --> DAOLocal : acessa
+ServiçoInscrição --> DAOAtleta : acessa
+ServiçoInscrição --> DAOCompetição : acessa
+ServiçoAlocação --> DAOLocal : acessa
+ServiçoAlocação --> DAOCompetição : acessa
+ServiçoResultados --> DAOResultado : acessa
+ServiçoResultados --> DAOMedalha : acessa
+ServiçoRelatórios --> DAOPaís : acessa
+ServiçoRelatórios --> DAOMedalha : acessa
+
+' Conectores - Módulo de Sessão e Cache
+ControladorWeb --> GerenciadorSessão : gerencia
+ServiçoCompetição --> Cache : lê/escreve
+ServiçoRelatórios --> Cache : lê/escreve
+
+' Conectores - DAOs para Banco de Dados
+DAOAtleta --> ServidorBD : consulta/atualiza
+DAOCompetição --> ServidorBD : consulta/atualiza
+DAOLocal --> ServidorBD : consulta/atualiza
+DAOResultado --> ServidorBD : consulta/atualiza
+DAOPaís --> ServidorBD : consulta/atualiza
+DAOMedalha --> ServidorBD : consulta/atualiza
+
+' Conectores - Banco de Dados
+ServidorBD --> ReplicaçãoBD : replica dados
+
+' Conectores - Serviços Externos
+ServiçoInscrição --> Email : envia confirmação
+ServiçoResultados --> Email : envia resultados
+ControladorWeb --> Autenticação : autentica usuário
+ControladorWeb --> Auditoria : registra operações
+
+' Conectores - Armazenamento
+ServidorBD --> ArmazenamentoArquivos : armazena documentos
+ServidorBD --> Backup : backup automático
+
+@enduml

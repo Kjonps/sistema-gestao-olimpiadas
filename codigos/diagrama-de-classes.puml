@@ -1,0 +1,229 @@
+@startuml Diagrama de Classes - SGO
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Classes
+
+' Classe Abstrata - Pessoa
+abstract class Pessoa {
+  -id: Long
+  -nome: String
+  -email: String
+  -telefone: String
+  +getId(): Long
+  +getNome(): String
+  +setNome(String): void
+}
+
+' Classe Atleta
+class Atleta extends Pessoa {
+  -dataNascimento: Date
+  -pais: País
+  -numeroRegistro: String
+  -ativo: Boolean
+  +getPais(): País
+  +setPais(País): void
+  +isAtivo(): Boolean
+  +registrar(): void
+}
+
+' Classe País
+class País {
+  -id: Long
+  -nome: String
+  -codigoISO: String
+  -atletas: List<Atleta>
+  -medalhas: List<Medalha>
+  +getId(): Long
+  +getNome(): String
+  +getAtletas(): List<Atleta>
+  +getMedalhas(): List<Medalha>
+  +adicionarAtleta(Atleta): void
+  +removerAtleta(Atleta): void
+}
+
+' Classe Competição
+class Competição {
+  -id: Long
+  -nome: String
+  -modalidade: String
+  -data: Date
+  -horarioInicio: Time
+  -horarioFim: Time
+  -local: Local
+  -atletas: List<Atleta>
+  -resultado: Resultado
+  -ativa: Boolean
+  +getId(): Long
+  +getNome(): String
+  +getModalidade(): String
+  +getData(): Date
+  +getLocal(): Local
+  +setLocal(Local): void
+  +getAtletas(): List<Atleta>
+  +adicionarAtleta(Atleta): void
+  +removerAtleta(Atleta): void
+  +getResultado(): Resultado
+  +setResultado(Resultado): void
+  +validarConflito(): Boolean
+  +isAtiva(): Boolean
+}
+
+' Classe Local
+class Local {
+  -id: Long
+  -nome: String
+  -capacidade: Integer
+  -endereco: String
+  -competicoes: List<Competição>
+  +getId(): Long
+  +getNome(): String
+  +getCapacidade(): Integer
+  +getEndereco(): String
+  +getCompetições(): List<Competição>
+  +adicionarCompetição(Competição): void
+  +removerCompetição(Competição): void
+  +verificarDisponibilidade(Date, Time, Time): Boolean
+}
+
+' Classe Resultado
+class Resultado {
+  -id: Long
+  -competicao: Competição
+  -atleta1lugar: Atleta
+  -atleta2lugar: Atleta
+  -atleta3lugar: Atleta
+  -dataCriacao: Date
+  -status: String
+  +getId(): Long
+  +getCompetição(): Competição
+  +getAtleta1lugar(): Atleta
+  +getAtleta2lugar(): Atleta
+  +getAtleta3lugar(): Atleta
+  +setAtletas(Atleta, Atleta, Atleta): void
+  +registrar(): void
+  +getMedalhas(): List<Medalha>
+}
+
+' Classe Medalha
+class Medalha {
+  -id: Long
+  -tipo: TipoMedalha
+  -atleta: Atleta
+  -pais: País
+  -competicao: Competição
+  -data: Date
+  +getId(): Long
+  +getTipo(): TipoMedalha
+  +getAtleta(): Atleta
+  +getPais(): País
+  +getCompetição(): Competição
+}
+
+' Enumeração TipoMedalha
+enum TipoMedalha {
+  OURO
+  PRATA
+  BRONZE
+}
+
+' Classe Inscrição
+class Inscrição {
+  -id: Long
+  -atleta: Atleta
+  -competicao: Competição
+  -dataInscrição: Date
+  -status: StatusInscrição
+  -confirmada: Boolean
+  +getId(): Long
+  +getAtleta(): Atleta
+  +getCompetição(): Competição
+  +getStatus(): StatusInscrição
+  +setStatus(StatusInscrição): void
+  +confirmar(): void
+  +cancelar(): void
+  +isConfirmada(): Boolean
+}
+
+' Enumeração StatusInscrição
+enum StatusInscrição {
+  PENDENTE
+  CONFIRMADA
+  CANCELADA
+  REALIZADA
+}
+
+' Classe Alocação
+class Alocação {
+  -id: Long
+  -competicao: Competição
+  -local: Local
+  -dataAlocacao: Date
+  -status: String
+  +getId(): Long
+  +getCompetição(): Competição
+  +getLocal(): Local
+  +validarConflito(): Boolean
+  +realocar(Local): void
+  +cancelar(): void
+}
+
+' Classe Relatório de Medalhas
+class RelatórioMedalhas {
+  -id: Long
+  -data: Date
+  -pais: País
+  -ouro: Integer
+  -prata: Integer
+  -bronze: Integer
+  -posicaoClassificacao: Integer
+  +getId(): Long
+  +getPais(): País
+  +getOuro(): Integer
+  +getPrata(): Integer
+  +getBronze(): Integer
+  +getPosição(): Integer
+  +calcularPontos(): Integer
+  +gerar(): void
+}
+
+' Relacionamentos
+
+' Atleta - País
+Atleta "1" --> "1" País : representa >
+
+' Atleta - Inscrição
+Atleta "1" --> "*" Inscrição : faz >
+
+' Competição - Inscrição
+Competição "1" --> "*" Inscrição : contém >
+
+' Competição - Local
+Competição "1" --> "1" Local : ocorre em >
+
+' Local - Alocação
+Local "1" --> "*" Alocação : sofre >
+
+' Competição - Alocação
+Competição "1" --> "1" Alocação : é alocada em >
+
+' Competição - Resultado
+Competição "1" --> "1" Resultado : gera >
+
+' Resultado - Medalha
+Resultado "1" --> "*" Medalha : distribui >
+
+' Atleta - Medalha
+Atleta "1" --> "*" Medalha : recebe >
+
+' País - Medalha
+País "1" --> "*" Medalha : contém >
+
+' País - RelatórioMedalhas
+País "1" --> "1" RelatórioMedalhas : possui >
+
+' Medalha - TipoMedalha
+Medalha "1" --> "1" TipoMedalha : tipo >
+
+' Inscrição - StatusInscrição
+Inscrição "1" --> "1" StatusInscrição : status >
+
+@enduml

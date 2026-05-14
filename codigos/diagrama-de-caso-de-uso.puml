@@ -1,0 +1,76 @@
+@startuml Diagrama de Caso de Uso - SGO
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Caso de Uso
+
+' Atores
+actor "Administrador" as Admin
+actor "Gestor de Competições" as Gestor
+actor "Árbitro/Juiz" as Arbitro
+actor "Atleta" as Atleta
+
+' Casos de Uso - Gestão de Competições
+usecase "Cadastrar Competição" as UC1
+usecase "Editar Competição" as UC2
+usecase "Deletar Competição" as UC3
+usecase "Listar Competições" as UC4
+
+' Casos de Uso - Inscrições
+usecase "Inscrever Atleta" as UC5
+usecase "Confirmar Inscrição" as UC6
+usecase "Cancelar Inscrição" as UC7
+usecase "Validar País do Atleta" as UC8
+
+' Casos de Uso - Alocação de Locais
+usecase "Alocar Local para Competição" as UC9
+usecase "Validar Conflito de Horário" as UC10
+usecase "Realocação de Local" as UC11
+
+' Casos de Uso - Resultados
+usecase "Registrar Resultados" as UC12
+usecase "Registrar Posições (1º, 2º, 3º)" as UC13
+usecase "Determinar Medalhas" as UC14
+
+' Casos de Uso - Relatórios
+usecase "Gerar Relatório de Medalhas" as UC15
+usecase "Consultar Desempenho por País" as UC16
+usecase "Gerar Classificação Geral" as UC17
+
+' Relacionamentos com Admin
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC9
+Admin --> UC15
+Admin --> UC16
+Admin --> UC17
+
+' Relacionamentos com Gestor
+Gestor --> UC1
+Gestor --> UC2
+Gestor --> UC4
+Gestor --> UC9
+Gestor --> UC10
+Gestor --> UC11
+Gestor --> UC12
+
+' Relacionamentos com Árbitro
+Arbitro --> UC12
+Arbitro --> UC13
+Arbitro --> UC14
+
+' Relacionamentos com Atleta
+Atleta --> UC5
+Atleta --> UC6
+Atleta --> UC7
+
+' Relacionamentos de Include
+UC5 .> UC8 : <<include>>
+UC9 .> UC10 : <<include>>
+UC12 .> UC13 : <<include>>
+UC13 .> UC14 : <<include>>
+
+' Relacionamentos de Extend
+UC3 ..|> UC2 : <<extend>>
+UC11 ..|> UC9 : <<extend>>
+
+@enduml
