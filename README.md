@@ -326,7 +326,7 @@ Critérios de Aceitação:
 ## 📊 Diagramas UML
 
 ### 1. Diagrama de Caso de Uso
-![Diagrama de Caso de Uso](./imagens/diagrama-de-caso-de-uso.png)
+![Diagrama de Caso de Uso](./imagens/diagrama-de-casos-de-uso.png)
 
 **Descrição:** Apresenta todos os atores (Administrador, Gestor, Árbitro, Atleta) e seus principais cenários de interação com o sistema.
 
@@ -340,7 +340,7 @@ Critérios de Aceitação:
 ---
 
 ### 3. Diagrama de Pacotes
-![Diagrama de Pacotes](./imagens/diagrama-de-pacotes.png)
+![Diagrama de Pacotes](./imagens/diagrama-de-pacotes.svg)
 
 **Descrição:** Organiza o sistema em 5 camadas: Apresentação, Negócio, Persistência, Banco de Dados e Utilitários.
 
