@@ -1,0 +1,125 @@
+@startuml Diagrama de Pacotes - SGO
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Pacotes
+
+skinparam packageStyle rectangle
+skinparam padding 2
+skinparam fontSize 9
+
+' ========== CAMADA 1: APRESENTAÇÃO ==========
+package "Apresentação" as AP {
+    package "Interface de Usuário" {
+        class ITelaCompetição
+        class ITelaInscrição
+        class ITelaResultados
+        class ITelaRelatórios
+        class ITelaAlocação
+    }
+    package "Controladores" {
+        class CtrlCompetição
+        class CtrlInscrição
+        class CtrlAlocação
+        class CtrlResultados
+        class CtrlRelatórios
+    }
+}
+
+' ========== CAMADA 2: NEGÓCIO ==========
+package "Negócio" as NG {
+    package "Entidades" {
+        class Atleta
+        class Competição
+        class Resultado
+        class País
+        class Local
+        class Medalha
+        class Inscrição
+        class Alocação
+    }
+    package "Serviços" {
+        class ServiçoCompetição
+        class ServiçoInscrição
+        class ServiçoAlocação
+        class ServiçoResultados
+        class ServiçoRelatórios
+        class ServiçoValidação
+    }
+    package "Validações" {
+        class ValidadorInscrição
+        class ValidadorConflito
+        class ValidadorAlocação
+        class ValidadorPaís
+    }
+}
+
+' ========== CAMADA 3: PERSISTÊNCIA ==========
+package "Persistência" as PS {
+    package "Repositórios" {
+        class RepositórioAtleta
+        class RepositórioCompetição
+        class RepositórioLocal
+        class RepositórioResultado
+        class RepositórioPaís
+    }
+    package "Mapeamento ORM" {
+        class MapeoAtleta
+        class MapeoCompetição
+        class MapeoLocal
+        class MapeoResultado
+        class MapeoPaís
+    }
+}
+
+' ========== CAMADA 4: BANCO DE DADOS ==========
+package "Banco de Dados" as BD {
+    package "SQL" {
+        class ConexaoDB
+        class ScriptCriação
+    }
+}
+
+' ========== CAMADA 5: UTILITÁRIOS ==========
+package "Utilitários" as UT {
+    package "Conversão" {
+        class ConversorData
+        class ConversorHora
+    }
+    package "Formatação" {
+        class FormatadorDados
+        class FormatadorRelatorio
+    }
+    package "Exceções" {
+        class ExcçãoInscrição
+        class ExcçãoConflito
+        class ExcçãoValidação
+        class ExcçãoNaoEncontrado
+    }
+}
+
+' ========== DEPENDÊNCIAS ENTRE CAMADAS ==========
+AP ..> NG : usa
+NG ..> PS : acessa
+PS ..> BD : persiste
+NG ..> UT : utiliza
+AP ..> UT : utiliza
+
+' ========== DEPENDÊNCIAS INTERNAS ==========
+CtrlCompetição .> ServiçoCompetição
+CtrlInscrição .> ServiçoInscrição
+CtrlAlocação .> ServiçoAlocação
+CtrlResultados .> ServiçoResultados
+CtrlRelatórios .> ServiçoRelatórios
+
+ServiçoCompetição .> RepositórioCompetição
+ServiçoInscrição .> RepositórioAtleta
+ServiçoInscrição .> RepositórioCompetição
+ServiçoAlocação .> RepositórioLocal
+ServiçoResultados .> RepositórioResultado
+ServiçoRelatórios .> RepositórioPaís
+
+ServiçoValidação .> ValidadorInscrição
+ServiçoValidação .> ValidadorConflito
+ServiçoValidação .> ValidadorAlocação
+ServiçoValidação .> ValidadorPaís
+
+@enduml
