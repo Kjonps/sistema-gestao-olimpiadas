@@ -335,7 +335,7 @@ Critérios de Aceitação:
 ### 2. Diagrama de Classes
 ![Diagrama de Classes](./imagens/diagrama-de-classes.png)
 
-**Descrição:** Mostra a estrutura estática com entidades (Atleta, Competição, Local, Resultado, Medalha, País) e seus relacionamentos.
+**Descrição:** Mostra a estrutura estática com entidades (Atleta, Competição, Local, Resultado, Medalha, País, Inscrição, Alocação, RelatorioMedalhas) e seus relacionamentos.
 
 ---
 
